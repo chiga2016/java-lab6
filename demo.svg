@@ -20,7 +20,14 @@ style="fill:white;stroke:green;stroke-width:3"/>
 style="stroke:yellow;stroke-width:2"/>   
    
 <circle cx="100" cy="50" r="40" stroke="black"
-stroke-width="2" fill="red"/>
+stroke-width="2" fill="red">
+	<circle cx="100" cy="50" r="5" stroke="black"
+	stroke-width="2" fill="red">
+		<circle cx="100" cy="50" r="1" stroke="black"
+		stroke-width="2" fill="red"/>
+	
+	</circle>
+</circle>
 
 <circle cx="80" cy="25" r="40" stroke="black"
 stroke-width="2" fill="green"/>

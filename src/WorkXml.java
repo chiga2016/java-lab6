@@ -21,119 +21,158 @@ public class WorkXml {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(name);
-
-        //Element element = document.getDocumentElement();
-        // System.out.println(element.getTagName());
-        //printCircles(element.getChildNodes());
         return document;
     }
 
 
+//    void printCircles(NodeList nodeList) {
+//        //NodeList nodeList = element.getChildNodes();
+//
+//        for (int i = 0; i < nodeList.getLength(); i++) {
+//            if (nodeList.item(i) instanceof Element)
+//                if (((Element) nodeList.item(i)).getTagName().equals("circle")) {
+//                    System.out.println(((Element) nodeList.item(i)).getTagName());
+//                    circles.add(new Circle(
+//                            nodeList.item(i).getAttributes().getNamedItem("cx").getNodeValue(),
+//                            nodeList.item(i).getAttributes().getNamedItem("cy").getNodeValue(),
+//                            nodeList.item(i).getAttributes().getNamedItem("r").getNodeValue(),
+//                            nodeList.item(i).getAttributes().getNamedItem("stroke").getNodeValue(),
+//                            nodeList.item(i).getAttributes().getNamedItem("stroke-width").getNodeValue(),
+//                            nodeList.item(i).getAttributes().getNamedItem("fill").getNodeValue()));
+//                }
+//        }
+//    }
+//
+//    void printCirclesList() {
+//        circles.stream().forEach(p -> {
+//                    System.out.println(p);
+//                }
+//        );
+//    }
+
+    void viewDocument(Document doc) {
+        Node n = doc.getDocumentElement();
+       // lookAttrs(n);
+        lookChildren(n,0);
+    }
 
 
-     void printCircles(NodeList nodeList) {
-        // NodeList nodeList = element.getChildNodes();
+    private void lookAttrs(Node n) {
+       //NodeList nl=n.getChildNodes();
+        NamedNodeMap attrs = n.getAttributes();
+        if (attrs==null) return;
+        int num = attrs.getLength();
+        if (num==0) return;
+        Node curNode;
+        System.out.print("[");
+        for (int i=0;i<num;i++) {
+            curNode = attrs.item(i);
+            System.out.printf("%s=%s ",
+                    curNode.getNodeName(),
+                    curNode.getNodeValue());
+        }
+        System.out.printf("]\n");
+    }
 
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            if (nodeList.item(i) instanceof Element)
-                if (((Element) nodeList.item(i)).getTagName().equals("circle")) {
-                    System.out.println(((Element) nodeList.item(i)).getTagName());
-                    circles.add(new Circle(
-                            nodeList.item(i).getAttributes().getNamedItem("cx").getNodeValue(),
-                            nodeList.item(i).getAttributes().getNamedItem("cy").getNodeValue(),
-                            nodeList.item(i).getAttributes().getNamedItem("r").getNodeValue(),
-                            nodeList.item(i).getAttributes().getNamedItem("stroke").getNodeValue(),
-                            nodeList.item(i).getAttributes().getNamedItem("stroke-width").getNodeValue(),
-                            nodeList.item(i).getAttributes().getNamedItem("fill").getNodeValue()));
-                }
+    void changeColor (Node node, String fill){
+        Node parentNode = node.getParentNode();
+        if (node.getAttributes().getNamedItem("style")!=null){
+            String fillStyle = "fill:" + fill+"; fill-rule: evenodd; stroke: #555; opacity: 0; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;";
+            ((Element)node).setAttribute("style",fillStyle);
+        }
+        else {
+//            if (node.getAttributes().getNamedItem("fill")==null&&parentNode.getAttributes().getNamedItem("fill")!=null ) {
+//                ((Element)parentNode).setAttribute("fill",fill);
+//            }
+//            else {
+                ((Element)node).setAttribute("fill", fill);
+//            }
         }
     }
 
-    void printCirclesList() {
-        circles.stream().forEach(p -> {
-                    System.out.println(p);
-                }
-        );
-    }
 
+    private void lookChildren(Node n, int level) {
+        NodeList nl=n.getChildNodes();//потомки
+        String space = "                                         ".substring(0,level);
+        int num = nl.getLength(); //количество потомков
+        Node curNode;
+        Node parentCurNode;
+        for (int i=0;i<num;i++) {
+            curNode = nl.item(i);
+            parentCurNode = nl.item(i).getParentNode();
+                //  System.out.println(curNode.getNodeType());
+                // curNode.getNodeValue() -- значение, существует для типов
+                // ATTRIBUTE, COMMENT, CDATA, TEXT
+                // curNode.getNodeName() -- имя тега для ELEMENT
+                // "#text" - для TEXT, "#cdata-section", "#comment","#document"
+                // "#document-fragment"
+                //System.out.printf("%s---%s\n",curNode.getNodeName(),curNode.getNodeValue());
+                // в зависимости от типа элемента...
+                switch (curNode.getNodeType()) {
+                    case Node.ELEMENT_NODE:
 
-    void printElements(NodeList nodeList, String typeElement) {
-        // NodeList nodeList = element.getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            if (nodeList.item(i) instanceof Element)
-                if (((Element) nodeList.item(i)).getTagName() == typeElement) {
-                    System.out.println(((Element) nodeList.item(i)).getTagName());
-                if (nodeList.item(i).hasChildNodes()){
-                    printElements(nodeList.item(i).getChildNodes(),"");
+                        if (curNode.getNodeName().equals("circle")) {
+                           // ((Element)curNode).setAttribute("stroke", "black"); // заменяем атрибут
+                            //((Element)curNode).setAttribute("fill", "red");
+                            insertCircle(curNode);
+                            changeColor(curNode,"black");
+                            System.out.printf(space + "ELEMENT: <%s> - Parent = <%s>\n", curNode.getNodeName(),parentCurNode.getNodeName());
+                            // читаем атрибуты
+                            System.out.print(space);
+                            lookAttrs(curNode);
+                        }
+                        if (curNode.getNodeName().equals("rect")) {
+                            changeColor(curNode,"green");
+                            //System.out.printf(space + "ELEMENT: <%s> - Parent = <%s>\n", curNode.getNodeName(),parentCurNode.getNodeName());
+                            // читаем атрибуты
+                            System.out.print(space);
+                            //lookAttrs(curNode);
+                        }
+                        if (curNode.getNodeName().equals("path")) {
+                            changeColor(curNode,"brown");
+                            //System.out.printf(space + "ELEMENT: <%s> - Parent = <%s>\n", curNode.getNodeName(),parentCurNode.getNodeName());
+                            // читаем атрибуты
+                            System.out.print(space);
+                            //lookAttrs(curNode);
+                        }
+                        // рекурсивно просматриваем вложенные узлы
+                        lookChildren(curNode, level + 5);
+                        break;
+                    case Node.COMMENT_NODE:
+                        // печатаем комментарий
+                        //System.out.println(space + "COMMENT: " + curNode.getNodeValue());
+                        break;
+                    case Node.TEXT_NODE:
+                        // печатаем текст, если он не только из пробелов и переводов строк
+                        String txt = curNode.getNodeValue().trim();
+//                    if (txt.length()>0) System.out.println(space+"TEXT: "+txt);
+//                    else System.out.println(space+" EMPTY TEXT");
+                        break;
                 }
-                }
+            }
         }
+
+
+
+    void insertCircle(Node node) {
+        Node parentNode = node.getParentNode();
+        Node cloneNode = node.cloneNode(true);
+        ((Element)cloneNode).setAttribute("r","10");
+        ((Element)cloneNode).setAttribute("fill","white");
+        ((Element)cloneNode).setAttribute("stroke","red");
+        ((Element)cloneNode).setAttribute("stroke-width","2");
+        parentNode.appendChild(cloneNode);
+
     }
 
-
-    // меняем цвета линий
-    void writeAttr(Element element, String typeElement, String str) {
-        for (int i = 0; i < element.getChildNodes().getLength(); i++) {
-            if (element.getChildNodes().item(i) instanceof Element)
-                if (((Element) element.getChildNodes().item(i)).getTagName() == typeElement) {
-                    System.out.println(((Element) element.getChildNodes().item(i)).getTagName());
-                    //System.out.println(element.getChildNodes().item(i).getAttributes().getNamedItem("style"));
-                    System.out.println(element.getChildNodes().item(i).getAttributes().getNamedItem("style").getNodeValue());
-                    ((Element) element.getChildNodes().item(i)).setAttribute("style", "fill:white;stroke:black;stroke-width:5");
-                    System.out.println(element.getChildNodes().item(i).getAttributes().getNamedItem("style").getNodeValue());
-
-
-                }
-        }
-    }
-
-    void addTag (Document doc)
-    {
-        Element element = doc.getDocumentElement();
-//        Element element1 = doc.createElement(name);
-//        Text idValue = doc.createTextNode(text);
-int lenElement=element.getChildNodes().getLength();
-for (int i=0;i<lenElement; i++)
-{
-    if (element.getChildNodes().item(i) instanceof Element)
-    if (((Element) element.getChildNodes().item(i)).getTagName().equals("circle")){
-        Element elementClone = (Element) element.getChildNodes().item(i).cloneNode(true);
-        elementClone.setAttribute("r","5");
-        elementClone.setAttribute("fill","white");
-        elementClone.setAttribute("stroke","red");
-        System.out.println(elementClone.toString());
-        System.out.println(element.getChildNodes().getLength());
-
-        // element.appendChild(elementClone);
-
-       element.insertBefore(elementClone,((Element) element.getChildNodes().item(i)));
-
-        // System.out.println(element.getChildNodes().item(i));
-       // System.out.println(element.getChildNodes().item(i).cloneNode(true));
-    }
-          //  System.out.println(element.getChildNodes().item(i));
-   // element.insertBefore(element.getChildNodes().item(i).,el)
-}
-
-//        element.appendChild(element1);
-//        element1.appendChild(idValue);
-        //Element newElement = doc.createElement(stepType); // Element to be inserted
-        //newElement.setAttribute("name", stepName);
-       // elem.getParentNode().insertBefore(newElement, elem.getNextSibling());
-    }
     void saveDemo(Document doc) throws IOException {
 
-        Result sr = new StreamResult(new FileWriter("demo2.svg"));
+        Result sr = new StreamResult(new FileWriter("clouds2.svg"));
         Result sr2 = new StreamResult(System.out);
         DOMSource domSource = new DOMSource(doc);
-
 //        Node totalNode = doc.createTextNode("testtesttest");
 //        Element totalElement = doc.createElement("total");
 //        totalElement.appendChild(totalNode);
-
-
-
-
         //  DOMSource domSource = new DOMSource(i2);
         // в newTransformer() можно было бы передать xslt - преобразование
         Transformer tr;
