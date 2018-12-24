@@ -88,7 +88,7 @@ public class Stax {
                        if (ee == XMLEvent.START_ELEMENT && eReader.getLocalName().equals("tag")) {
                           // System.out.println("нашелся tag");
                            //System.out.println(eReader.getAttributeCount());
-                           System.out.printf("%s == 0: %s, 1: %s, 2: %s, 3: %s ",eReader.getLocalName(), eReader.getAttributeValue(0), eReader.getAttributeValue(1), eReader.getAttributeValue(2), eReader.getAttributeValue(3));
+                           //System.out.printf("%s == 0: %s, 1: %s, 2: %s, 3: %s ",eReader.getLocalName(), eReader.getAttributeValue(0), eReader.getAttributeValue(1), eReader.getAttributeValue(2), eReader.getAttributeValue(3));
 
                            String str = eReader.getAttributeValue(0);
                            //System.out.println(eReader.getLocalName());
@@ -111,7 +111,7 @@ public class Stax {
                    if (highway!=""&&streetName!="") {
                        //System.out.println("highway="+highway+""+"; streetName="+streetName);
                        if (streetMap.containsKey(streetName)) {
-                           streetMap.get(streetName).highways.add(highway);
+                           streetMap.get(streetName).addHighway(highway);
                        } else streetMap.put(streetName, new StreetData(streetName, highway));
                    }
 
