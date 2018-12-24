@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 public class WorkXml {
 
-    List<Circle> circles = new ArrayList<Circle>();
+    List<Node> circles = new ArrayList<Node>();
 
     Document reader(String name) throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -114,7 +114,8 @@ public class WorkXml {
                         if (curNode.getNodeName().equals("circle")) {
                            // ((Element)curNode).setAttribute("stroke", "black"); // заменяем атрибут
                             //((Element)curNode).setAttribute("fill", "red");
-                            insertCircle(curNode);
+                            circles.add(curNode);
+                            //insertCircle(curNode);
                             changeColor(curNode,"black");
                             System.out.printf(space + "ELEMENT: <%s> - Parent = <%s>\n", curNode.getNodeName(),parentCurNode.getNodeName());
                             // читаем атрибуты
@@ -161,8 +162,23 @@ public class WorkXml {
         ((Element)cloneNode).setAttribute("fill","white");
         ((Element)cloneNode).setAttribute("stroke","red");
         ((Element)cloneNode).setAttribute("stroke-width","2");
-        parentNode.appendChild(cloneNode);
+        //parentNode.appendChild(cloneNode);
+        parentNode.insertBefore(cloneNode,node.getNextSibling());
 
+    }
+
+    void insertCircle() {
+        for (int i=0;i<circles.size();i++) {
+
+            Node parentNode = circles.get(i).getParentNode();
+            Node cloneNode = circles.get(i).cloneNode(true);
+            ((Element) cloneNode).setAttribute("r", "10");
+            ((Element) cloneNode).setAttribute("fill", "white");
+            ((Element) cloneNode).setAttribute("stroke", "red");
+            ((Element) cloneNode).setAttribute("stroke-width", "2");
+            //parentNode.appendChild(cloneNode);
+            parentNode.insertBefore(cloneNode, circles.get(i));
+        }
     }
 
     void saveDemo(Document doc) throws IOException {

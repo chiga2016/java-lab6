@@ -125,6 +125,9 @@
 			<xs:attribute name="version" type="xs:float" use="required"
 				fixed="0.6" />
 			<xs:attribute name="generator" type="xs:string" use="optional" />
+			<xs:attribute name="copyright" type="xs:string" use="required" />
+			<xs:attribute name="attribution" type="xs:string" use="required" />
+			<xs:attribute name="license" type="xs:string" use="required" />
 		</xs:complexType>
 	</xs:element>
  
