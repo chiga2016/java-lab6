@@ -34,24 +34,24 @@ public class Stax {
             try {
                 XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
                 XMLStreamReader eReader = xmlInputFactory.createXMLStreamReader(new FileReader(filename));
-           while (eReader.hasNext()) {
-               vNode = false;
-               //vBusStope=false;
-               //busStopName="";
+                while (eReader.hasNext()) {
+                    vNode = false;
+                    //vBusStope=false;
+                    //busStopName="";
 
-               int e = eReader.next();
-               if (e == XMLEvent.START_ELEMENT && eReader.getLocalName().equals("node")) {
-                   vNode = true;
-                   vBusStope = false;
-                   busStopName = "";
-                   while (vNode) {
-                       int ee = eReader.next();
-                       if (ee == XMLEvent.END_ELEMENT && eReader.getLocalName().equals("node")) {
-                           vNode = false;
-                       }
-                       if (ee == XMLEvent.START_ELEMENT && eReader.getLocalName().equals("tag")) {
-                           String k = eReader.getAttributeValue("", "k");
-                           String v = eReader.getAttributeValue("", "v");
+                    int e = eReader.next();
+                    if (e == XMLEvent.START_ELEMENT && eReader.getLocalName().equals("node")) {
+                        vNode = true;
+                        vBusStope = false;
+                        busStopName = "";
+                        while (vNode) {
+                            int ee = eReader.next();
+                            if (ee == XMLEvent.END_ELEMENT && eReader.getLocalName().equals("node")) {
+                                vNode = false;
+                            }
+                            if (ee == XMLEvent.START_ELEMENT && eReader.getLocalName().equals("tag")) {
+                                String k = eReader.getAttributeValue("", "k");
+                                String v = eReader.getAttributeValue("", "v");
 //                           String v = ee.asStartElement().getAttributeByName(new QName("v")).getValue();
 //                           System.out.println(eReader.getLocalName());
 //                          while( ee.asStartElement().getAttributes().hasNext())
@@ -59,65 +59,65 @@ public class Stax {
 //                              //System.out.println(ee.asStartElement().getAttributes().next());
 //                          }
 
-                           if (v.equals("bus_stop")) {
-                               vBusStope = true;
-                           }
-                           if (k.equals("name")) {
-                               busStopName = eReader.getAttributeValue(1);
-                           }
-                       }
-                   }
-                   if (vBusStope && busStopName != null) {
-                       lst.add(busStopName);
-                   }
-               } //node
-               boolean vWay = false;
-               boolean vTag = false;
-               String highway = "";
-               String streetName = "";
-               int wayNumber=0;
-               if (e == XMLEvent.START_ELEMENT && eReader.getLocalName().equals("way")) {
+                                if (v.equals("bus_stop")) {
+                                    vBusStope = true;
+                                }
+                                if (k.equals("name")) {
+                                    busStopName = eReader.getAttributeValue(1);
+                                }
+                            }
+                        }
+                        if (vBusStope && busStopName != null) {
+                            lst.add(busStopName);
+                        }
+                    } //node
+                    boolean vWay = false;
+                    boolean vTag = false;
+                    String highway = "";
+                    String streetName = "";
+                    int wayNumber = 0;
+                    if (e == XMLEvent.START_ELEMENT && eReader.getLocalName().equals("way")) {
 
-                  // System.out.println("way вошли");
-                   vWay = true;
-                   while (vWay) {
-                       wayNumber++;
-                       //System.out.print(eReader.getLocation().getLineNumber());
-                       //System.out.println(" - way true");
-                       int ee = eReader.next();
-                       if (ee == XMLEvent.START_ELEMENT && eReader.getLocalName().equals("tag")) {
-                          // System.out.println("нашелся tag");
-                           //System.out.println(eReader.getAttributeCount());
-                           //System.out.printf("%s == 0: %s, 1: %s, 2: %s, 3: %s ",eReader.getLocalName(), eReader.getAttributeValue(0), eReader.getAttributeValue(1), eReader.getAttributeValue(2), eReader.getAttributeValue(3));
+                        // System.out.println("way вошли");
+                        vWay = true;
+                        while (vWay) {
+                            wayNumber++;
+                            //System.out.print(eReader.getLocation().getLineNumber());
+                            //System.out.println(" - way true");
+                            int ee = eReader.next();
+                            if (ee == XMLEvent.START_ELEMENT && eReader.getLocalName().equals("tag")) {
+                                // System.out.println("нашелся tag");
+                                //System.out.println(eReader.getAttributeCount());
+                                //System.out.printf("%s == 0: %s, 1: %s, 2: %s, 3: %s ",eReader.getLocalName(), eReader.getAttributeValue(0), eReader.getAttributeValue(1), eReader.getAttributeValue(2), eReader.getAttributeValue(3));
 
-                           String str = eReader.getAttributeValue(0);
-                           //System.out.println(eReader.getLocalName());
-                           //System.out.println(str);
-                               if (str.equals("highway")) {
-                                   highway = eReader.getAttributeValue(1);
+                                String str = eReader.getAttributeValue(0);
+                                //System.out.println(eReader.getLocalName());
+                                //System.out.println(str);
+                                if (str.equals("highway")) {
+                                    highway = eReader.getAttributeValue(1);
 
-                               } else if (str.equals("name")) {
-                                   streetName = eReader.getAttributeValue(1);
-                               }
-                       }
-                       if (ee == XMLEvent.END_ELEMENT && eReader.getLocalName().equals("way")) {
-                           //System.out.print(eReader.getLocation().getLineNumber());
-                          // System.out.println(" - вышли из way");
-                           System.out.println();
-                           vWay = false;
-                       }
-                   }
+                                } else if (str.equals("name")) {
+                                    streetName = eReader.getAttributeValue(1);
+                                }
+                            }
+                            if (ee == XMLEvent.END_ELEMENT && eReader.getLocalName().equals("way")) {
+                                //System.out.print(eReader.getLocation().getLineNumber());
+                                // System.out.println(" - вышли из way");
+                                System.out.println();
+                                vWay = false;
+                            }
+                        }
 
-                   if (highway!=""&&streetName!="") {
-                       //System.out.println("highway="+highway+""+"; streetName="+streetName);
-                       if (streetMap.containsKey(streetName)) {
-                           streetMap.get(streetName).addHighway(highway);
-                       } else streetMap.put(streetName, new StreetData(streetName, highway));
-                   }
+                        if (highway != "" && streetName != "") {
+                            //System.out.println("highway="+highway+""+"; streetName="+streetName);
+                            if (streetMap.containsKey(streetName)) {
+                                streetMap.get(streetName).addHighway(highway);
+                            } else streetMap.put(streetName, new StreetData(streetName, highway));
+                        }
 
 
-               }
-           }
+                    }
+                }
                 System.out.println(lst.toString());
                 System.out.println("Список улиц");
                 for (Map.Entry<String, StreetData> entry : streetMap.entrySet()) {
@@ -129,81 +129,12 @@ public class Stax {
                     //System.out.println(entry.getValue().name + "\t\t\t\t\t\t" + entry.getValue().highways.size()+"\t\t\t " + entry.getValue().highways);
                 }
 
-
-
             } catch (IOException ex) {
                 ex.printStackTrace();
             } catch (XMLStreamException ex) {
                 ex.printStackTrace();
             }
         }
-
-//        void readStaxStream(String filename) {
-//            try {
-//                XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-//
-//                XMLStreamReader sReader = xmlInputFactory.createXMLStreamReader(new FileReader(filename));
-//
-//                // XMLEventReader создаёт временные объекты XMLEvent по ходу чтения
-//                while (sReader.hasNext()) {
-//                    //eReader.peek() - подсмотреть следущее событие без перехода на него
-//
-//                    int code = sReader.next();
-//                    // следующее событие при чтении XML
-//
-//                    switch(code) {
-//                        case XMLEvent.START_ELEMENT:
-//
-//                            System.out.printf(
-//                                    "<%s ",
-//                                    sReader.getLocalName());
-//
-//                            int ac = sReader.getAttributeCount();
-//                            Map<String,String> attrMap
-//                                    = new LinkedHashMap<String, String>();
-//                            for (int i=0;i<ac;i++) {
-//                                attrMap.put(
-//                                        sReader.getAttributeLocalName(i),
-//                                            //    "/"+sReader.getAttributeType(i)+"/",
-//                                        sReader.getAttributeValue(i));
-//                            }
-//
-//                            System.out.print(attrMap);
-//                            System.out.println(">");
-////
-//                            if (sReader.getLocalName().equals("tag")) {
-//                                //System.out.println(sReader.getLocalName());
-//                                System.out.println("следующий тег = "  );
-//                            }
-//
-////
-////                            if (sReader.getLocalName()
-////                                    .equals("material")) {
-////                                System.out.println("inner text="+
-//                                      // sReader.getElementText();
-////                                );
-////                                // считывает до конца тега и берет текст
-////                            }
-//                            break;
-//                        case XMLEvent.END_ELEMENT:
-//                            System.out.printf("</%s> \n",
-//                                    sReader.getLocalName());
-//                            break;
-//                    }
-//                    if (sReader.isCharacters()) {
-//                        if (!sReader.isWhiteSpace()) {
-//                            System.out.println("["+sReader.getText()+"]");
-//                        }
-//                    }
-//                }
-//
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            } catch (XMLStreamException ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-
 
         // простая проверка схемы
         void schemaCheckerTest(String fileName, String schemaName) {
@@ -212,7 +143,7 @@ public class Stax {
                 Schema schema = factory.newSchema(new File(schemaName));
                 Validator validator = schema.newValidator();
                 validator.validate(new StreamSource(new File(fileName)));
-                System.out.printf("Файл %s соответствует схеме %s",fileName,schemaName);
+                System.out.printf("Файл %s соответствует схеме %s", fileName, schemaName);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -225,7 +156,7 @@ public class Stax {
             try {
                 XMLStreamWriter sw2
                         = xof.createXMLStreamWriter(System.err);
-                XMLStreamWriter sw=sw2;//new IndentingXMLStreamWriter(sw2); // only for older JDKs
+                XMLStreamWriter sw = sw2;//new IndentingXMLStreamWriter(sw2); // only for older JDKs
 
                 sw.writeStartDocument();
                 sw.writeStartElement("hello");
@@ -242,11 +173,9 @@ public class Stax {
             }
 
 
-
         }
 
 
-
-}
+    }
 
 }
