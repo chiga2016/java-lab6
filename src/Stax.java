@@ -22,7 +22,8 @@ public class Stax {
 
 
         void readStaxEvent(String filename) throws XMLStreamException, FileNotFoundException {
-            List lst = new ArrayList();
+            //List lst = new ArrayList();
+            Set<String> busStopSet = new TreeSet<>();
             Map<String, StreetData> streetMap = new TreeMap<String, StreetData>();
 //            int numberLineBusStation=0;
 //            int currentLineNumber=0;
@@ -68,7 +69,7 @@ public class Stax {
                             }
                         }
                         if (vBusStope && busStopName != null) {
-                            lst.add(busStopName);
+                            busStopSet.add(busStopName);
                         }
                     } //node
                     boolean vWay = false;
@@ -103,7 +104,7 @@ public class Stax {
                             if (ee == XMLEvent.END_ELEMENT && eReader.getLocalName().equals("way")) {
                                 //System.out.print(eReader.getLocation().getLineNumber());
                                 // System.out.println(" - вышли из way");
-                                System.out.println();
+                                //System.out.println();
                                 vWay = false;
                             }
                         }
@@ -118,7 +119,7 @@ public class Stax {
 
                     }
                 }
-                System.out.println(lst.toString());
+                System.out.println(busStopSet.toString());
                 System.out.println("Список улиц");
                 for (Map.Entry<String, StreetData> entry : streetMap.entrySet()) {
                     System.out.print(entry.getValue().name);

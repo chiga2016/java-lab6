@@ -19,9 +19,9 @@ public class Main {
 //        readerXml.saveDemo(document);
 //     new Stax.StaxDemo().schemaCheckerTest("UfaCenter.xml", "osm.xsd");
 
-     new Stax.StaxDemo().readStaxEvent("UfaCenter.xml");
+     //new Stax.StaxDemo().readStaxEvent("UfaCenter.xml");
 
-//new Jaxb().unmarshall();
+    new Jaxb().unmarshall();
 
 
     }
